@@ -4,10 +4,12 @@ import customerRouter from './routes/customerRoute.js'
 import databaseConnection from './config/dbConnection.js'
 import errorHandler from './middleware/errorHandler.js'
 import userRouter from './routes/userRoute.js'
+import cors from 'cors'
 
 dotenv.config()
 
 const app = express()
+app.use(cors())
 app.use(express.json())
 
 databaseConnection()
