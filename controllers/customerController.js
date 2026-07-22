@@ -1,5 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import customerModel from "../model/customerSchema.js";
+import User from "../model/userModel.js";
 
 const getCustomers = expressAsyncHandler ( async (req, res) => {
     const customer = await customerModel.find()
@@ -65,5 +66,35 @@ const deleteCustomer = expressAsyncHandler ( async (req, res) => {
     res.status(200).json(deletedCustomer)
 })
 
+const searchCustomer = expressAsyncHandler( async (req, res) => {
+    const searchString = req.query.search
 
-export {getCustomers, getCustomer, addCustomer, updateCustomer, deleteCustomer}
+    if(searchString === "") {
+        const users = await customerModel.find()
+        if(users.length === 0) {
+            res.status(404)
+            throw new Error(`Not found`)
+        }
+        res.status(200)
+        res.json(users)
+    } else {
+        const users = await customerModel.find()
+        const filteredUsers = users.filter((element, index) => {
+            if(element["fullName"].startsWith(searchString)) {
+                return element;
+            }
+        })
+
+        if(filteredUsers.length === 0) {
+            res.status(404)
+            throw new Error(`No user found`)
+        }
+
+        res.status(200)
+        res.json(filteredUsers)
+    }
+
+})
+
+
+export {getCustomers, getCustomer, addCustomer, updateCustomer, deleteCustomer, searchCustomer}
